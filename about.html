@@ -1,0 +1,686 @@
+<!DOCTYPE html><html lang="he" dir="rtl" data-zappy-site-type="ecommerce"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אודות | תבשילי סימה</title>
+  <meta name="description" content="אודות — תבשילי סימה">
+  <meta name="keywords" content="אודות, אוכל ביתי מוכן משלוח, תבשילים ביתיים בריאים הזמנה, מנות מוכנות לשבת, תבשילי סימה">
+  <meta name="robots" content="index, follow">
+  
+  <meta property="og:title" content="אודות | תבשילי סימה">
+  <meta property="og:description" content="אודות — תבשילי סימה">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="אודות | תבשילי סימה">
+  <meta name="twitter:description" content="אודות — תבשילי סימה">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+<!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '7dd408db-3b55-42a9-a219-8d0ecf69bc30',
+    apiUrl: 'https://qaapi.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: #333 !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))), .sub-menu:not(:has(li)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .sub-menu.mobile-expanded { max-height: 500px !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: 44px !important; background: transparent !important; border: none !important; cursor: pointer !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-search-panel" id="mobile-search-panel">
+      <div class="search-wrapper">
+        <input type="text" id="mobile-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+        <button class="search-submit" id="mobile-search-submit" title="חיפוש">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+        <button class="close-search" id="close-mobile-search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="search-results" id="mobile-search-results"></div>
+    </div>
+  
+<script>window.ZAPPY_WEBSITE_ID = "7dd408db-3b55-42a9-a219-8d0ecf69bc30";window.ZAPPY_API_BASE = (window.location.pathname.includes('/preview') ? "http://localhost:5001" : "https://qaapi.zappy5.com");</script>
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  
+  <button class="phone-header-btn" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/business-logo.webp" alt="תבשילי סימה" class="logo" />
+      </a>
+    </div>
+    
+    <ul class="nav-menu" id="navMenu">
+
+    <li class="menu-item-has-children zappy-products-dropdown">
+      <a href="/products">
+        מוצרים
+        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"></path>
+        </svg>
+      </a>
+      <ul class="sub-menu" id="zappy-nav-category-links">
+        <li><a href="/products">כל המוצרים</a></li>
+        <!-- Categories will be loaded dynamically -->
+      </ul>
+    </li>
+  <li><a href="/about">אודות</a></li><li><a href="/recipes">מתכונים</a></li><li><a href="/contact">צור קשר</a></li></ul><div class="nav-ecommerce-icons nav-icons-left"><a href="/login" class="login-link nav-login" title="התחברות"><svg class="login-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a><a href="#cart" class="cart-link nav-cart" id="cart-drawer-toggle" title="עגלת קניות"><svg class="cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-count">0</span></a><div class="nav-search-box">
+    <input type="text" class="nav-search-input" id="nav-search-input" placeholder="חיפוש מוצרים..." autocomplete="off">
+    <button class="nav-search-btn" id="nav-search-btn" title="חיפוש">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    </button>
+    <div class="nav-search-results" id="nav-search-results"></div>
+  </div></div><div class="nav-ecommerce-icons nav-icons-right"><button class="nav-search-toggle" id="mobile-search-toggle" title="חיפוש"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button></div>
+    
+    
+  </div>
+</nav>
+
+    <nav class="zappy-catalog-menu rtl" id="zappy-catalog-menu" dir="rtl">
+      <div class="catalog-menu-container">
+        <a href="/products" class="catalog-menu-item catalog-menu-all">כל המוצרים</a>
+        <div class="catalog-menu-categories" id="zappy-category-links">
+          <!-- Categories will be loaded dynamically -->
+        </div>
+      </div>
+    </nav>
+  
+  
+  <main>
+    <section class="about-intro-section" data-layout-spec="אודות-intro">
+  <div class="about-intro-container">
+    <div class="about-intro-content">
+      <h1>מי אנחנו</h1>
+      <p>תבשילי סימה נולדה מתוך אהבה אמיתית לאוכל ביתי מוכן משלוח ומהרצון לחלוק את הטעמים של הבית עם כל משפחה. כל מנה מוכנת בקפידה, עם חומרי גלם טריים ומתכונים מסורתיים שעוברים מדור לדור.</p>
+      <p>אנחנו מאמינים שאוכל טוב הוא לא רק על טעם – הוא על חום, דאגה ואיכות. בכל סיר ובכל צלחת, אנחנו שואפים להביא לכם את החוויה של ארוחה ביתית אמיתית, בלי להתפשר על בריאות ועל טעם.</p>
+    </div>
+    <div class="about-intro-imagery">
+      <div class="about-intro-image-frame">
+        <img data-placeholder="about-intro-image-1" data-context="Warm, inviting close-up photo of hands preparing traditional Israeli home cooking - chopping fresh vegetables on a wooden cutting board surrounded by colorful spices in small bowls, warm natural lighting, authentic kitchen atmosphere, focus on the cooking process, showing care and tradition" width="600" height="700" src="/assets/site-about-intro-image-1.webp" alt="ידיים מכינות אוכל ביתי עם תבלינים טריים">
+      </div>
+    </div>
+  </div>
+  <div class="about-intro-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,30 Q100,28 200,32 T400,28 Q500,32 600,28 T800,32 Q900,28 1000,32 T1200,30 L1200,60 Z" fill="var(--bg-light)" opacity="0.95"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="about-timeline-section" data-layout-spec="אודות-timeline">
+  <div class="about-timeline-container">
+    <div class="about-timeline-header">
+      <h2>המסע שלנו</h2>
+      <p>מתבשילים ביתיים פשוטים למותג שמביא אוכל ביתי מוכן משלוח לכל בית. כל שלב בדרך לימד אותנו משהו חדש על טעם, איכות והתחייבות למסורת הקולינרית הישראלית.</p>
+    </div>
+
+    <div class="about-timeline-track">
+      <div class="about-timeline-line" aria-hidden="true"></div>
+
+      <article class="about-timeline-entry">
+        <div class="about-timeline-marker" aria-hidden="true"></div>
+        <div class="about-timeline-card">
+          <h3>ההתחלה וההשראה</h3>
+          <p>הכל התחיל במטבח הביתי, עם מתכונים שעברו בירושה מדור לדור. סימה הבינה שיש ביקוש לאוכל ביתי אמיתי – תבשילים ביתיים בריאים הזמנה שמזכירים את הטעמים של פעם, מבושלים באהבה ובתשומת לב לכל פרט.</p>
+        </div>
+      </article>
+
+      <article class="about-timeline-entry">
+        <div class="about-timeline-marker" aria-hidden="true"></div>
+        <div class="about-timeline-card">
+          <h3>שיכלול המתכונים והטכניקה</h3>
+          <p>עם הזמן, כל מתכון עבר תהליך של שיפור מתמיד. למדנו איך לשמור על הטעם הביתי גם בהכנה בכמויות גדולות יותר, איך לשמר את הרעננות, ואיך להבטיח שכל מנה תגיע לשולחן כאילו הוכנה ברגע זה במטבח שלכם.</p>
+        </div>
+      </article>
+
+      <article class="about-timeline-entry">
+        <div class="about-timeline-marker" aria-hidden="true"></div>
+        <div class="about-timeline-card">
+          <h3>שיתוף עם קהל רחב יותר</h3>
+          <p>היום, תבשילי סימה מגיעים לעשרות בתים בכל שבוע. אנחנו מתמחים במנות מוכנות לשבת, בתבשילים לאירועים משפחתיים, ובמנות יומיומיות שחוסכות זמן בלי לוותר על איכות. כל הזמנה היא הזדמנות להביא קצת מהחום והטעם של הבית שלנו לבית שלכם.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="about-timeline-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="sesame-grain-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="8" cy="12" r="0.8" fill="rgba(138,75,42,0.08)"></circle>
+          <circle cx="24" cy="6" r="0.6" fill="rgba(138,75,42,0.06)"></circle>
+          <circle cx="32" cy="28" r="0.7" fill="rgba(138,75,42,0.07)"></circle>
+          <circle cx="12" cy="34" r="0.5" fill="rgba(138,75,42,0.05)"></circle>
+          <circle cx="36" cy="16" r="0.6" fill="rgba(138,75,42,0.06)"></circle>
+        </pattern>
+      </defs>
+      <path d="M0,80 L0,45 Q100,38 200,42 T400,38 Q500,42 600,36 T800,40 Q900,36 1000,42 T1200,38 L1200,80 Z" fill="var(--bg-light)"></path>
+      <rect x="0" y="0" width="1200" height="80" fill="url(#sesame-grain-pattern)" opacity="0.4"></rect>
+    </svg>
+  </div>
+</section>
+
+<section class="about-team-section" data-layout-spec="אודות-team">
+  <div class="about-team-container">
+    <div class="about-team-header">
+      <h2>האנשים מאחורי הטעמים</h2>
+      <p>צוות מסור של אנשי מקצוע עם ניסיון עשיר בבישול ביתי ואירוח, שמביאים את המסורת והאהבה למטבח ישירות אל השולחן שלכם.</p>
+    </div>
+    
+    <div class="about-team-grid">
+      <article class="about-team-card">
+        <div class="about-team-portrait">
+          <img data-placeholder="about-team-image-1" data-context="Professional portrait photo of Sima, the head chef and owner of Tavshilei Sima, a warm Israeli woman in her 50s-60s wearing a chef apron in a bright kitchen, smiling naturally with cooking utensils and fresh ingredients visible in background, warm natural lighting, authentic and editorial food photography style" data-element-type="image" width="600" height="600" src="/assets/site-about-team-image-1.webp" alt="סימה, השפית הראשית ובעלת תבשילי סימה">
+        </div>
+        <div class="about-team-info">
+          <h3>סימה כהן</h3>
+          <p class="about-team-role">שפית ראשית ובעלים</p>
+          <p>עם למעלה מ-30 שנות ניסיון בבישול ביתי ומסורתי, סימה מביאה את המתכונים המשפחתיים האהובים ביותר לכל בית.</p>
+        </div>
+      </article>
+      
+      <article class="about-team-card">
+        <div class="about-team-portrait">
+          <img data-placeholder="about-team-image-2" data-context="Professional portrait photo of Yael, sous chef at Tavshilei Sima, a young Israeli woman in her 30s wearing chef whites in a professional kitchen, focused and passionate expression, food preparation visible, warm natural lighting, authentic culinary photography style" data-element-type="image" width="600" height="600" src="/assets/site-about-team-image-2.webp" alt="יעל לוי, סו-שפית בתבשילי סימה">
+        </div>
+        <div class="about-team-info">
+          <h3>יעל לוי</h3>
+          <p class="about-team-role">סו-שפית</p>
+          <p>יעל מתמחה בבישול בריא ומאוזן, ומקפידה על שימוש במרכיבים טריים ואיכוtiים בכל מנה.</p>
+        </div>
+      </article>
+      
+      <article class="about-team-card">
+        <div class="about-team-portrait">
+          <img data-placeholder="about-team-image-3" data-context="Professional portrait photo of David, head of operations at Tavshilei Sima, an Israeli man in his 40s in casual professional attire standing in a modern kitchen facility, friendly and approachable smile, food packaging and delivery boxes visible in background, warm natural lighting, authentic business portrait style" data-element-type="image" width="600" height="600" src="/assets/site-about-team-image-3.webp" alt="דוד מזרחי, מנהל תפעול בתבשילי סימה">
+        </div>
+        <div class="about-team-info">
+          <h3>דוד מזרחי</h3>
+          <p class="about-team-role">מנהל תפעול</p>
+          <p>דוד אחראי על הלוגיסטיקה והמשלוחים, ומוודא שכל מנה מגיעה טרייה ובזמן ישירות לדלת ביתכם.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+  
+  <div class="about-team-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,28 Q30,32 60,28 T120,32 Q150,28 180,32 T240,28 Q270,32 300,28 T360,32 Q390,28 420,32 T480,28 Q510,32 540,28 T600,32 Q630,28 660,32 T720,28 Q750,32 780,28 T840,32 Q870,28 900,32 T960,28 Q990,32 1020,28 T1080,32 Q1110,28 1140,32 T1200,28 L1200,60 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="about-values-section" data-layout-spec="אודות-values">
+  <div class="about-values-container">
+    <div class="about-values-intro">
+      <h2>על מה אנחנו עומדים</h2>
+      <p>בתבשילי סימה, כל מנה שאנחנו מכינים משקפת את הערכים שמנחים אותנו בכל יום. אלה הם העקרונות שהופכים את האוכל שלנו לחוויה אמיתית ומשמעותית.</p>
+    </div>
+
+    <div class="about-values-grid">
+      <div class="about-values-item">
+        <svg data-element-type="icon" data-icon-type="svg" class="about-values-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>כבוד למרכיבים</h3>
+        <p>אנחנו בוחרים רק חומרי גלם איכותיים ועונתיים, ומתייחסים לכל מרכיב בתשומת לב ובהערכה. כל ירק, כל תבלין, כל מנה – מקבלים את מלוא תשומת הלב שהם ראויים לה.</p>
+      </div>
+
+      <div class="about-values-item">
+        <svg data-element-type="icon" data-icon-type="svg" class="about-values-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 11L12 14L22 4M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>בהירות ובטחון</h3>
+        <p>אנחנו מאמינים בשקיפות מלאה. כל מה שאתם צריכים לדעת על המנות שלנו – מהמרכיבים ועד דרך ההכנה – זמין ונגיש. אנחנו רוצים שתרגישו בטוחים ובשליטה מלאה.</p>
+      </div>
+
+      <div class="about-values-item">
+        <svg data-element-type="icon" data-icon-type="svg" class="about-values-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>נדיבות ואירוח</h3>
+        <p>האוכל שלנו מגיע מתוך רצון אמיתי לארח ולפנק. כל מנה מוכנה במנות נדיבות, עם תשומת לב לפרטים הקטנים שהופכים ארוחה לחוויה חמה ומזמינה.</p>
+      </div>
+
+      <div class="about-values-item">
+        <svg data-element-type="icon" data-icon-type="svg" class="about-values-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h3>יצירתיות עם ריסון</h3>
+        <p>אנחנו אוהבים לחדש ולהפתיע, אבל תמיד בצורה מאוזנת. הטעמים המוכרים והאהובים נשארים במרכז, עם נגיעות עדינות של חידוש שמעשירות מבלי להסתיר את המהות.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-values-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="speckledGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:rgba(247,239,232,0);stop-opacity:1"></stop>
+          <stop offset="40%" style="stop-color:rgba(138,75,42,0.08);stop-opacity:1"></stop>
+          <stop offset="70%" style="stop-color:rgba(92,126,166,0.12);stop-opacity:1"></stop>
+          <stop offset="100%" style="stop-color:rgba(30,27,24,0.18);stop-opacity:1"></stop>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="1200" height="100" fill="url(#speckledGradient)"></rect>
+    </svg>
+  </div>
+</section>
+
+<section class="about-cta-section" data-layout-spec="אודות-cta">
+  <div class="about-cta-container">
+    <div class="about-cta-content">
+      <h2 class="about-cta-title">בואו ניצור ביחד משהו בלתי נשכח</h2>
+      <p class="about-cta-text">יש לכם שאלות? רוצים לשתף פעולה או לקבל ייעוץ אישי? אנחנו כאן בשבילכם. צרו קשר ונבנה ביחד חוויה קולינרית מיוחדת שתישאר בזיכרון.</p>
+      <a href="#contact" class="about-cta-button btn-primary">צרו קשר עכשיו</a>
+    </div>
+  </div>
+  
+  <svg class="about-cta-glow" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="about-cta-warm-glow" cx="20%" cy="20%" r="60%">
+        <stop offset="0%" style="stop-color:#8A4B2A;stop-opacity:0.18"></stop>
+        <stop offset="50%" style="stop-color:#D81B60;stop-opacity:0.08"></stop>
+        <stop offset="100%" style="stop-color:#1E1B18;stop-"></stop>
+      </radialGradient>
+    </defs>
+    <circle cx="160" cy="160" r="480" fill="url(#about-cta-warm-glow)"></circle>
+  </svg>
+</section>
+  </main>
+  
+  <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <div class="footer-section footer-about">
+        <img src="/assets/business-logo.webp" alt="תבשילי סימה" class="logo" />
+        <p class="footer-description">המקום שלך למתכונים ביתיים, טיפים לבישול ואהבה לאוכל טוב. מבשלים ביחד, נהנים ביחד.</p>
+      </div>
+      
+      <div class="footer-section footer-links">
+        <h3 class="footer-title">קישורים מהירים</h3>
+        <ul class="footer-nav">
+          <li><a href="/about">אודות</a></li>
+          <li><a href="/recipes">מתכונים</a></li>
+          <li><a href="/contact">צור קשר</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section footer-contact">
+        <h3 class="footer-title">יצירת קשר</h3>
+        <ul class="contact-info">
+          <li>
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:[business_email]">[business_email]</a>
+          </li>
+          <li>
+            <i class="fas fa-phone"></i>
+            <a href="tel:[business_phone]">[business_phone]</a>
+          </li>
+          <li><a href="/"><i class="fas fa-map-marker-alt"></i>
+            <span>[business_address]</span></a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section footer-social">
+        <h3 class="footer-title">עקבו אחרינו</h3>
+        <div class="social-links">
+          <a href="[facebook_handle]" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="[instagram_handle]" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="[whatsapp_handle]" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <a href="/privacy">Privacy Policy</a>
+        <span class="separator">|</span>
+        <a href="/terms">Terms &amp; Conditions</a><span class="separator">|</span>
+            <a href="/return-policy" aria-label="מדיניות החזרות">
+              מדיניות החזרות
+            </a>
+        <span class="separator">|</span>
+        <a href="/accessibility">Accessibility</a>
+      </div>
+      <div class="footer-copyright">
+        <p>© 2026 תבשילי סימה. All rights reserved.</p>
+      </div>
+      <div class="footer-attribution">
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution" rel="noopener noreferrer">Generated by Zappy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <script src="/script.js"></script>
+
+    <div data-integration="accessibility:toolbar"></div>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+</body></html>
